@@ -1,0 +1,143 @@
+import { useState, useEffect } from 'react';
+import { useTheme } from '../context/ThemeContext.jsx';
+
+export default function ServiceListPage() {
+  const { isDark, toggleTheme } = useTheme();
+  const [services, setServices] = useState([
+    { id: 1, name: 'API Gateway', host: 'localhost', port: 3001, status: 'online' },
+    { id: 2, name: 'Database Service', host: 'localhost', port: 5432, status: 'online' },
+    { id: 3, name: 'Auth Service', host: 'localhost', port: 8080, status: 'online' },
+    { id: 4, name: 'File Storage', host: 'localhost', port: 9000, status: 'online' }
+  ]);
+
+  // 🔗 PYTHON BACKEND: Buscar lista de serviços
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const fetchServices = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/services');
+      const data = await response.json();
+      setServices(data);
+      console.log('Lista de serviços atualizada do Python backend');
+    } catch (error) {
+      console.error('Erro ao buscar serviços do Python:', error);
+      // Manter dados mock se backend não estiver disponível
+    }
+  };
+
+  const openLogViewer = (service) => {
+    // Abre nova aba com os logs do serviço específico
+    const url = `/logs?service=${service.id}&name=${service.name}&host=${service.host}&port=${service.port}`;
+    window.open(url, '_blank');
+  };
+
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'online': return 'bg-green-500';
+      case 'offline': return 'bg-red-500';
+      case 'warning': return 'bg-yellow-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
+  return (
+    <div className={`min-h-screen p-3 sm:p-6 ${isDark ? 'bg-black' : 'bg-white'}`}>
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className={`rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 lg:p-10 mb-4 sm:mb-8 backdrop-blur-sm ${isDark ? 'bg-black border border-gray-600' : 'bg-white/90 border border-white/20'}`}>
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6 mb-4 lg:mb-6">
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+              {/* Logo */}
+              <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 rounded-2xl sm:rounded-3xl flex items-center justify-center p-3 sm:p-4 shadow-xl">
+                <img src="/logo-integra.png" alt="Integra Logo" className="w-full h-full object-contain" />
+              </div>
+              <div className="text-center sm:text-left">
+                <h1 className={`text-2xl sm:text-3xl lg:text-4xl font-bold mb-1 sm:mb-2 ${isDark ? 'text-white' : 'text-black'}`}>Log Viewer</h1>
+                <p className={`text-sm sm:text-base lg:text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Selecione um serviço para visualizar os logs em tempo real</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={toggleTheme}
+                className={`p-2 rounded-xl transition-colors ${isDark ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-100 text-black hover:bg-gray-200'}`}
+              >
+                {isDark ? '☀️' : '🌙'}
+              </button>
+              <div className="text-center lg:text-right">
+                <div className={`text-xs sm:text-sm mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Serviços Ativos</div>
+                <div className={`text-2xl sm:text-3xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>{services.filter(s => s.status === 'online').length}/{services.length}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Services Grid */}
+        <div className={`rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 lg:p-8 backdrop-blur-sm ${isDark ? 'bg-black border border-gray-600' : 'bg-white/90 border border-white/20'}`}>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
+            <h2 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>Serviços Disponíveis</h2>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => window.open('/create-log', '_blank')}
+                className={`px-4 sm:px-6 py-2 sm:py-3 rounded-xl transition-colors font-medium text-sm sm:text-base ${isDark ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-600 text-white hover:bg-gray-700'}`}
+              >
+                + Criar Log
+              </button>
+              <button 
+                onClick={fetchServices}
+                className={`px-4 sm:px-6 py-2 sm:py-3 rounded-xl transition-colors font-medium text-sm sm:text-base ${isDark ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'}`}
+              >
+                Atualizar
+              </button>
+            </div>
+          </div>
+          <div className="grid gap-4 sm:gap-6">
+            {services.map((service, index) => (
+              <div 
+                key={service.id} 
+                className={`group border-2 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02] ${isDark ? 'border-gray-600 hover:border-white bg-black' : 'border-gray-200 hover:border-black bg-white'}`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+                    <div className="relative flex-shrink-0">
+                      <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full shadow-lg ${
+                        service.status === 'online' ? (isDark ? 'bg-white' : 'bg-black') :
+                        service.status === 'offline' ? 'bg-gray-400' :
+                        'bg-gray-600'
+                      }`}></div>
+                      {service.status === 'online' && (
+                        <div className={`absolute inset-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full animate-ping opacity-40 ${isDark ? 'bg-white' : 'bg-black'}`}></div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className={`text-lg sm:text-xl font-bold mb-1 truncate ${isDark ? 'text-white' : 'text-black'}`}>{service.name}</h3>
+                      <p className={`font-mono text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-lg inline-block break-all ${isDark ? 'text-gray-300 bg-gray-600' : 'text-gray-600 bg-gray-100'}`}>
+                        {service.host}:{service.port}
+                      </p>
+                      <div className="mt-2">
+                        <span className={`text-xs px-2 sm:px-3 py-1 rounded-full font-medium ${
+                          service.status === 'online' ? (isDark ? 'bg-white text-black' : 'bg-black text-white') :
+                          service.status === 'offline' ? (isDark ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600') :
+                          (isDark ? 'bg-gray-500 text-gray-200' : 'bg-gray-300 text-gray-700')
+                        }`}>
+                          {service.status.toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => openLogViewer(service)}
+                    className={`w-full sm:w-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-base lg:text-lg transition-all duration-300 transform hover:scale-105 shadow-lg ${isDark ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'}`}
+                  >
+                    Ver Logs
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
