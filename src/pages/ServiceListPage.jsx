@@ -79,10 +79,10 @@ export default function ServiceListPage() {
             <h2 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>Serviços Disponíveis</h2>
             <div className="flex gap-3">
               <button 
-                onClick={() => window.open('/create-log', '_blank')}
-                className={`px-4 sm:px-6 py-2 sm:py-3 rounded-xl transition-colors font-medium text-sm sm:text-base ${isDark ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-600 text-white hover:bg-gray-700'}`}
+                onClick={() => window.open('/settings', '_blank')}
+                className={`px-4 sm:px-6 py-2 sm:py-3 rounded-xl transition-colors font-medium text-sm sm:text-base ${isDark ? 'bg-gray-600 text-white hover:bg-gray-500' : 'bg-gray-500 text-white hover:bg-gray-600'}`}
               >
-                + Criar Log
+                Configurações
               </button>
               <button 
                 onClick={fetchServices}
