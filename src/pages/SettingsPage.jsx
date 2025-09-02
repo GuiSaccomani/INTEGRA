@@ -51,8 +51,8 @@ export default function SettingsPage() {
         <div className="px-3 sm:px-6 py-4 sm:py-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0">
-                <img src="/logo-integra.png" alt="Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
+              <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center flex-shrink-0">
+                <img src="/logo-integra.png" alt="Logo" className="w-full h-full object-contain" />
               </div>
               <div>
                 <h1 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>Configurações</h1>

@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
+import { logSender } from '../services/logSender.js';
 
 export default function ServiceListPage() {
   const { isDark, toggleTheme } = useTheme();
+  const { logout } = useAuth();
   const [services, setServices] = useState([
     { id: 1, name: 'API Gateway', host: 'localhost', port: 3001, status: 'online' },
     { id: 2, name: 'Database Service', host: 'localhost', port: 5432, status: 'online' },
@@ -17,18 +20,30 @@ export default function ServiceListPage() {
 
   const fetchServices = async () => {
     try {
+      // Registrar ação do usuário
+      await logSender.logUserAction('atualizou lista de serviços');
+      
+      // Descomente quando backend estiver pronto:
+      /*
       const response = await fetch('http://localhost:3001/api/services');
       const data = await response.json();
       setServices(data);
-      console.log('Lista de serviços atualizada do Python backend');
+      */
+      
+      console.log('Lista de serviços atualizada');
     } catch (error) {
-      console.error('Erro ao buscar serviços do Python:', error);
-      // Manter dados mock se backend não estiver disponível
+      console.error('Erro ao buscar serviços:', error);
+      await logSender.logError(error, 'fetchServices');
     }
   };
 
   const openLogViewer = (service) => {
-    // Abre nova aba com os logs do serviço específico
+    // Registrar acesso aos logs (sem await para não bloquear)
+    logSender.logUserAction('acessou logs do serviço', {
+      service_id: service.id,
+      service_name: service.name
+    }).catch(error => console.error('Erro ao registrar log:', error));
+    
     const url = `/logs?service=${service.id}&name=${service.name}&host=${service.host}&port=${service.port}`;
     window.open(url, '_blank');
   };
@@ -50,7 +65,7 @@ export default function ServiceListPage() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6 mb-4 lg:mb-6">
             <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
               {/* Logo */}
-              <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 rounded-2xl sm:rounded-3xl flex items-center justify-center p-3 sm:p-4 shadow-xl">
+              <div className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 flex items-center justify-center">
                 <img src="/logo-integra.png" alt="Integra Logo" className="w-full h-full object-contain" />
               </div>
               <div className="text-center sm:text-left">
@@ -59,12 +74,20 @@ export default function ServiceListPage() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <button
-                onClick={toggleTheme}
-                className={`p-2 rounded-xl transition-colors ${isDark ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-100 text-black hover:bg-gray-200'}`}
-              >
-                {isDark ? '☀️' : '🌙'}
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={toggleTheme}
+                  className={`p-2 rounded-xl transition-colors ${isDark ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-100 text-black hover:bg-gray-200'}`}
+                >
+                  {isDark ? '☀️' : '🌙'}
+                </button>
+                <button
+                  onClick={logout}
+                  className={`px-3 py-2 rounded-xl transition-colors text-sm ${isDark ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-red-500 text-white hover:bg-red-600'}`}
+                >
+                  Sair
+                </button>
+              </div>
               <div className="text-center lg:text-right">
                 <div className={`text-xs sm:text-sm mb-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Serviços Ativos</div>
                 <div className={`text-2xl sm:text-3xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>{services.filter(s => s.status === 'online').length}/{services.length}</div>

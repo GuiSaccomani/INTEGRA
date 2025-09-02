@@ -6,9 +6,8 @@ export default function LogViewer({ logs, filter }) {
   const logContainerRef = useRef(null);
 
   const filteredLogs = logs.filter(log => {
-    const matchesFilter = filter === 'all' || log.level.toLowerCase() === filter;
     const matchesSearch = log.message.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesFilter && matchesSearch;
+    return matchesSearch;
   });
 
   useEffect(() => {

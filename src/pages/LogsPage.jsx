@@ -27,8 +27,13 @@ export default function LogsPage() {
   const port = searchParams.get('port') || '3000';
   const [level, setLevel] = useState('info');
 
-  // 🔗 PYTHON BACKEND: Stream de logs em tempo real
+  // 🔗 PYTHON BACKEND: Preparado para receber logs do backend quando estiver pronto
   useEffect(() => {
+    // Simular conexão ativa para demonstração
+    setIsConnected(true);
+    
+    // Descomente quando backend estiver pronto:
+    /*
     if (serviceId) {
       try {
         const eventSource = new EventSource(`http://localhost:3001/api/logs/${serviceId}/stream`);
@@ -57,11 +62,13 @@ export default function LogsPage() {
         setIsConnected(false);
       }
     }
+    */
   }, [serviceId]);
 
-  const filteredLogs = logs.filter(log => 
-    filter === 'all' || log.level.toLowerCase() === filter
-  );
+  const filteredLogs = logs.filter(log => {
+    const matchesFilter = filter === 'all' || log.level.toLowerCase() === filter;
+    return matchesFilter;
+  });
 
   const getLevelColor = (level) => {
     switch(level) {
@@ -79,8 +86,8 @@ export default function LogsPage() {
         <div className="px-3 sm:px-6 py-4 sm:py-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0">
-                <img src="/logo-integra.png" alt="Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain" />
+              <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center flex-shrink-0">
+                <img src="/logo-integra.png" alt="Logo" className="w-full h-full object-contain" />
               </div>
               <div className="min-w-0">
                 <h1 className={`text-xl sm:text-2xl font-bold truncate ${isDark ? 'text-white' : 'text-black'}`}>{serviceName}</h1>
@@ -120,10 +127,10 @@ export default function LogsPage() {
 
       <div className="p-3 sm:p-6">
         {/* Tabs Interativas */}
-        <LogTabs logs={logs} onFilterChange={setFilter} />
+        <LogTabs logs={filteredLogs} onFilterChange={setFilter} />
 
         {/* Visualizador de Logs */}
-        <LogViewer logs={logs} filter={filter} />
+        <LogViewer logs={filteredLogs} filter={filter} />
 
         {/* Dashboard de Métricas */}
         <div className="flex justify-between items-center mb-4 mt-6">

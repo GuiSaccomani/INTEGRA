@@ -1,6 +1,6 @@
-# 📊 Log Viewer - Sistema de Monitoramento de Logs
+# 📊 Log Viewer - Sistema de Envio e Monitoramento de Logs
 
-Um sistema moderno e elegante para visualização e monitoramento de logs em tempo real, desenvolvido com React e Electron.
+Um sistema moderno e elegante para envio automático de logs e monitoramento em tempo real, desenvolvido com React e integração com backend Python.
 
 ## 🚀 Como Iniciar
 
@@ -198,15 +198,16 @@ psycopg2-binary==2.9.9
 ```
 ```
 
-## 📱 Como o Site Funciona
+## 📱 Como o Sistema Funciona
 
-### Arquitetura PgAdmin Style
+### Arquitetura de Envio de Logs
 
-O sistema funciona como o PgAdmin 4:
+O sistema funciona enviando logs automaticamente para o backend:
 
-1. **Aplicação Desktop/Web** - Lista os serviços disponíveis
-2. **Clique em "Ver Logs"** - Abre nova aba no navegador
-3. **Aba Específica** - Mostra logs do serviço selecionado
+1. **Aplicação Web** - Interface para monitoramento
+2. **Autenticação** - Login obrigatório (admin/admin)
+3. **Envio Automático** - Logs de ações, erros e eventos
+4. **Backend Python** - Recebe e processa os logs
 
 ### Fluxo de Uso
 
@@ -327,15 +328,103 @@ npm run preview      # Preview do build
 
 ## 🎯 Recursos
 
-- ✅ Interface moderna e responsiva
-- ✅ Tema claro/escuro
-- ✅ Logs em tempo real
-- ✅ Filtros avançados
-- ✅ Dashboard interativo
-- ✅ Busca em tempo real
-- ✅ Auto-scroll configurável
-- ✅ Métricas e relatórios
-- ✅ Arquitetura PgAdmin style
+- ✅ **Autenticação obrigatória** - Login seguro
+- ✅ **Envio automático de logs** - Ações, erros, eventos
+- ✅ **Interface moderna** - Design responsivo e elegante
+- ✅ **Tema escuro padrão** - Alternância claro/escuro
+- ✅ **Configurações avançadas** - Sincronização e API Key
+- ✅ **Dashboard interativo** - Métricas em tempo real
+- ✅ **Filtros inteligentes** - Por nível e busca textual
+- ✅ **Interceptação global** - Captura automática de erros
+- ✅ **Logs estruturados** - Com metadados e contexto
+- ✅ **Preparado para produção** - Backend Python FastAPI
+
+## 🔧 Solução de Problemas
+
+### Erro: "@vitejs/plugin-react can't detect preamble"
+**Causa:** Falta da importação do React nos componentes.
+
+**Solução:**
+```javascript
+// Adicione esta linha no início dos arquivos .jsx
+import React from 'react';
+```
+
+### Erro: "Unexpected token 'd', 'dark' is not valid JSON"
+**Causa:** Dados corrompidos no localStorage do navegador.
+
+**Soluções:**
+
+1. **Pelo Console do Navegador:**
+   - Abra F12 > Console
+   - Digite: `localStorage.clear()`
+   - Pressione Enter e recarregue a página
+
+2. **Pelo Código (já implementado):**
+   ```javascript
+   const [isDark, setIsDark] = useState(() => {
+     try {
+       const saved = localStorage.getItem('theme');
+       return saved ? JSON.parse(saved) : true;
+     } catch (error) {
+       localStorage.removeItem('theme');
+       return true;
+     }
+   });
+   ```
+
+### Tela Branca no Navegador
+**Causas possíveis:**
+- Erros de JavaScript (verifique F12 > Console)
+- Problemas de build
+- Cache do navegador
+
+**Soluções:**
+```bash
+# Limpar cache e reinstalar
+npm cache clean --force
+Remove-Item -Recurse -Force node_modules  # Windows
+# ou
+rm -rf node_modules  # Linux/Mac
+npm install
+npm run dev
+```
+
+### Warning: "MODULE_TYPELESS_PACKAGE_JSON"
+**Causa:** Configuração de módulo não especificada.
+
+**Solução (opcional):**
+Adicione no `package.json`:
+```json
+{
+  "name": "log-viewer",
+  "type": "module",
+  ...
+}
+```
+
+### Servidor não inicia
+**Verificações:**
+1. Node.js instalado (versão 16+)
+2. Dependências instaladas: `npm install`
+3. Porta 5173 disponível
+4. Permissões de firewall
+
+**Comandos úteis:**
+```bash
+# Verificar versão do Node
+node --version
+
+# Reinstalar dependências
+npm install
+
+# Iniciar em porta diferente
+npm run dev -- --port 3000
+
+# Build para produção
+npm run build
+npm run preview
+```
 
 ## 🤝 Contribuição
 
