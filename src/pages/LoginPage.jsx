@@ -17,51 +17,34 @@ export default function LoginPage({ onLogin }) {
     setError('');
 
     try {
-      // Simular autenticação (substitua pela API real)
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Simular delay de autenticação
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Credenciais de exemplo (remova em produção)
+      // Validar credenciais
       if (credentials.username === 'admin' && credentials.password === 'admin') {
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('username', credentials.username);
         
-        // Registrar login bem-sucedido
-        await logSender.logUserAction('fez login no sistema', {
+        // Registrar login (sem await para não bloquear)
+        logSender.logUserAction('fez login no sistema', {
           username: credentials.username,
           timestamp: new Date().toISOString()
-        });
+        }).catch(() => {});
         
         onLogin(true);
       } else {
-        // Registrar tentativa de login falhada
-        await logSender.logUserAction('tentativa de login falhada', {
+        // Registrar tentativa falhada (sem await)
+        logSender.logUserAction('tentativa de login falhada', {
           username: credentials.username,
           reason: 'credenciais inválidas'
-        });
+        }).catch(() => {});
         
         setError('Usuário ou senha incorretos');
       }
       
-      // Descomente para API real:
-      /*
-      const response = await fetch('http://localhost:3001/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials)
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('token', data.token);
-        onLogin(true);
-      } else {
-        setError('Credenciais inválidas');
-      }
-      */
-      
     } catch (error) {
-      setError('Erro de conexão');
+      console.error('Erro no login:', error);
+      setError('Erro interno do sistema');
     } finally {
       setIsLoading(false);
     }
