@@ -1,5 +1,4 @@
 import { getConnection } from "../config/db.js";
-import { saveLog } from "./logService.js";
 
 /**
  * Busca usuário pelo e-mail.
@@ -23,7 +22,6 @@ export async function getUserByEmail(email) {
         return result.rows[0];
     } catch (err) {
         console.error("Erro ao buscar usuário por email:", err);
-        await saveLog("Error", `Erro ao buscar usuário: ${err.message}`);
         throw err;
     } finally {
         if (conn) {

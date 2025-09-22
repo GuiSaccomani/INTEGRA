@@ -5,8 +5,9 @@ import logRoutes from "./routes/logRoutes.js";
 const app = express();
 app.use(express.json());
 
-app.use("/api/cfg", cfgRoutes);
-app.use("/api/logs", logRoutes);
+app.use("/cfg", cfgRoutes);
+app.use("/logs", logRoutes);
+app.use("/login", logRoutes);
 
 app.use((err, req, res, next) => {
   console.error("Erro interno:", err);

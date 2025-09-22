@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { getUserByEmail } from "./userService.js";
-import { saveLog } from "./logService.js";
+
 
 /**
  * Autentica usuário com base no e-mail e senha.
@@ -22,12 +22,9 @@ export async function login(email, password) {
       { expiresIn: "1h" }
     );
 
-    await saveLog("AUTH", `Login realizado com sucesso para ${user.EMAIL}`);
-
     return token;
   } catch (err) {
     console.error("Erro ao autenticar usuário:", err);
-    await saveLog("ERROR", `Erro no login: ${err.message}`);
     throw err;
   }
 }
