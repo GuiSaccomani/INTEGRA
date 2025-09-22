@@ -23,12 +23,10 @@ export default function ServiceListPage() {
       // Registrar ação do usuário
       await logSender.logUserAction('atualizou lista de serviços');
       
-      // Descomente quando backend estiver pronto:
-      /*
+      // Conectando com a API
       const response = await fetch('http://localhost:3001/api/services');
       const data = await response.json();
       setServices(data);
-      */
       
       console.log('Lista de serviços atualizada');
     } catch (error) {
