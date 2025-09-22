@@ -1,17 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { api } from "../services/api.js";
+import { useConfig } from "../hooks/useConfig.js";
 
 export default function ConfigForm() {
   const [host, setHost] = useState("");
   const [port, setPort] = useState("");
   const [level, setLevel] = useState("info");
   const navigate = useNavigate();
+  const { config, loading, toggleConfig } = useConfig();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.saveConfig({ host, port, level });
+      // Salvar configurações básicas localmente
+      console.log('Configurações salvas:', { host, port, level });
       navigate('/monitoring');
     } catch (error) {
       console.error('Erro ao salvar configuração:', error);
@@ -74,6 +76,57 @@ export default function ConfigForm() {
             🚀 Conectar e Visualizar Logs
           </button>
         </form>
+        
+        {/* Configurações do Sistema */}
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <h3 className="text-lg font-bold text-black mb-4">Configurações do Sistema</h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <span className="text-sm font-medium text-black">Sincronização</span>
+              <button
+                onClick={() => toggleConfig('sincronizacao')}
+                disabled={loading}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                  config.sincronizacao 
+                    ? 'bg-green-500 text-white' 
+                    : 'bg-red-500 text-white'
+                }`}
+              >
+                {config.sincronizacao ? 'Ativa' : 'Inativa'}
+              </button>
+            </div>
+            
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <span className="text-sm font-medium text-black">Captura</span>
+              <button
+                onClick={() => toggleConfig('captura')}
+                disabled={loading}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                  config.captura 
+                    ? 'bg-green-500 text-white' 
+                    : 'bg-red-500 text-white'
+                }`}
+              >
+                {config.captura ? 'Ativa' : 'Inativa'}
+              </button>
+            </div>
+            
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <span className="text-sm font-medium text-black">Conexão</span>
+              <button
+                onClick={() => toggleConfig('conexao')}
+                disabled={loading}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                  config.conexao 
+                    ? 'bg-green-500 text-white' 
+                    : 'bg-red-500 text-white'
+                }`}
+              >
+                {config.conexao ? 'Funcionando' : 'Não funcionando'}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

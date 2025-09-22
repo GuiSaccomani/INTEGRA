@@ -1,6 +1,7 @@
 import express from "express";
 import cfgRoutes from "./routes/cfgRoutes.js";
 import logRoutes from "./routes/logRoutes.js";
+import servicesRoutes from "./routes/servicesRoutes.js";
 
 const app = express();
 
@@ -20,16 +21,11 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-// Endpoint para serviços (compatível com frontend)
-app.get('/api/services', (req, res) => {
-  res.json([
-    { id: 1, name: 'Sincronização', host: 'localhost', port: 3001, status: 'online' },
-    { id: 2, name: 'Captura', host: 'localhost', port: 3002, status: 'online' }
-  ]);
-});
+
 
 app.use("/api/cfg", cfgRoutes);
 app.use("/api/logs", logRoutes);
+app.use("/api/services", servicesRoutes);
 
 app.use((err, req, res, next) => {
   console.error("Erro interno:", err);
