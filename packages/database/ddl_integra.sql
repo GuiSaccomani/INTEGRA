@@ -1,0 +1,77 @@
+-- --------------------------------------------------
+-- Criação do usuário
+-- --------------------------------------------------
+CREATE USER INTEGRA
+IDENTIFIED BY "senha"
+DEFAULT TABLESPACE USERS
+TEMPORARY TABLESPACE TEMP
+QUOTA UNLIMITED ON USERS;
+
+-- Grants mínimos
+GRANT CONNECT, RESOURCE TO INTEGRA;
+GRANT CREATE TABLE, CREATE SEQUENCE, CREATE VIEW TO INTEGRA;
+
+-- --------------------------------------------------
+-- TABELA CFG
+-- --------------------------------------------------
+CREATE TABLE INTEGRA.CFG (
+    CFG_CAPTURE_STATE   NUMBER(1) DEFAULT 1 NOT NULL,
+    CFG_SYNC_STATE      NUMBER(1) DEFAULT 1 NOT NULL,
+    CFG_SYNC_INTERVAL   NUMBER(5) DEFAULT 10 NOT NULL,
+    CFG_CHECK_INTERVAL  NUMBER(5) DEFAULT 10 NOT NULL,
+    CFG_APIKEY          VARCHAR2(32)
+);
+
+-- Inserindo valor padrão na tabela CFG
+INSERT INTO INTEGRA.CFG (
+    CFG_CAPTURE_STATE,
+    CFG_SYNC_STATE,
+    CFG_SYNC_INTERVAL,
+    CFG_CHECK_INTERVAL,
+    CFG_APIKEY
+) VALUES (
+    1,
+    1,
+    10,
+    10,
+    NULL
+);
+
+-- --------------------------------------------------
+-- TABELA LOGS
+-- --------------------------------------------------
+CREATE TABLE INTEGRA.LOGS (
+    LOG_ID        VARCHAR2(36) PRIMARY KEY,
+    LOG_TIMESTAMP TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+    LOG_TYPE      CHAR(10) NOT NULL,
+    LOG_CONTENT   CLOB NOT NULL
+) LOB (LOG_CONTENT) STORE AS SECUREFILE;
+
+-- --------------------------------------------------
+-- TABELA SALES
+-- --------------------------------------------------
+CREATE TABLE INTEGRA.SALES (
+    SALE_ID          VARCHAR2(36) PRIMARY KEY,
+    SALE_TIMESTAMP   TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL,
+    SALE_BARCODE_TYPE VARCHAR2(20) NOT NULL,
+    SALE_BARCODE      VARCHAR2(50) NOT NULL
+);
+
+-- --------------------------------------------------
+-- TABELA USERS
+-- --------------------------------------------------
+CREATE TABLE INTEGRA.USERS (
+    USER_ID       VARCHAR2(36) PRIMARY KEY,
+    USER_NAME     VARCHAR2(100) NOT NULL,
+    USER_EMAIL    VARCHAR2(150) NOT NULL UNIQUE,
+    USER_PASSWORD VARCHAR2(200) NOT NULL,
+    USER_CREATED  TIMESTAMP DEFAULT SYSTIMESTAMP NOT NULL
+);
+
+-- --------------------------------------------------
+-- SEQUÊNCIAS
+-- --------------------------------------------------
+CREATE SEQUENCE INTEGRA.SEQ_CFG_ID START WITH 1 INCREMENT BY 1 NOCYCLE CACHE 20;
+CREATE SEQUENCE INTEGRA.SEQ_LOGS_ID START WITH 1 INCREMENT BY 1 NOCYCLE CACHE 20;
+CREATE SEQUENCE INTEGRA.SEQ_SALES_ID START WITH 1 INCREMENT BY 1 NOCYCLE CACHE 20;
+CREATE SEQUENCE INTEGRA.SEQ_USERS_ID START WITH 1 INCREMENT BY 1 NOCYCLE CACHE 20;
