@@ -2,15 +2,14 @@ import { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { logSender } from '../services/logSender.js';
+import { SunIcon, MoonIcon } from '../components/Icons.jsx';
 
 export default function ServiceListPage() {
   const { isDark, toggleTheme } = useTheme();
   const { logout } = useAuth();
   const [services, setServices] = useState([
-    { id: 1, name: 'API Gateway', host: 'localhost', port: 3001, status: 'online' },
-    { id: 2, name: 'Database Service', host: 'localhost', port: 5432, status: 'online' },
-    { id: 3, name: 'Auth Service', host: 'localhost', port: 8080, status: 'online' },
-    { id: 4, name: 'File Storage', host: 'localhost', port: 9000, status: 'online' }
+    { id: 1, name: 'Sincronização', host: 'localhost', port: 3001, status: 'online' },
+    { id: 2, name: 'Captura', host: 'localhost', port: 3002, status: 'online' }
   ]);
 
   // 🔗 PYTHON BACKEND: Buscar lista de serviços
@@ -64,7 +63,7 @@ export default function ServiceListPage() {
             <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
               {/* Logo */}
               <div className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 flex items-center justify-center">
-                <img src="/logo-integra.png" alt="Integra Logo" className="w-full h-full object-contain" />
+                <img src="/logo-integra.png" alt="Integra Logo" className={`w-full h-full object-contain ${!isDark ? 'filter invert' : ''}`} />
               </div>
               <div className="text-center sm:text-left">
                 <h1 className={`text-2xl sm:text-3xl lg:text-4xl font-bold mb-1 sm:mb-2 ${isDark ? 'text-white' : 'text-black'}`}>Log Viewer</h1>
@@ -77,7 +76,7 @@ export default function ServiceListPage() {
                   onClick={toggleTheme}
                   className={`p-2 rounded-xl transition-colors ${isDark ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-100 text-black hover:bg-gray-200'}`}
                 >
-                  {isDark ? '☀️' : '🌙'}
+                  {isDark ? <SunIcon /> : <MoonIcon />}
                 </button>
                 <button
                   onClick={logout}

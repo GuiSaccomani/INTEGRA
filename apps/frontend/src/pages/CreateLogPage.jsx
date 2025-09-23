@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { api } from '../services/api.js';
+import { SunIcon, MoonIcon } from '../components/Icons.jsx';
 
 export default function CreateLogPage() {
   const { isDark, toggleTheme } = useTheme();
@@ -13,10 +14,8 @@ export default function CreateLogPage() {
   const [success, setSuccess] = useState(false);
 
   const [services, setServices] = useState([
-    { id: 1, name: 'API Gateway' },
-    { id: 2, name: 'Database Service' },
-    { id: 3, name: 'Auth Service' },
-    { id: 4, name: 'File Storage' }
+    { id: 1, name: 'Sincronização' },
+    { id: 2, name: 'Captura' }
   ]);
 
   // Carregar serviços do backend
@@ -83,7 +82,7 @@ export default function CreateLogPage() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
               <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${isDark ? 'bg-white' : 'bg-black'}`}>
-                <img src="/logo-integra.png" alt="Logo" className="w-6 h-6 sm:w-8 sm:h-8 object-contain" />
+                <img src="/logo-integra.png" alt="Logo" className={`w-6 h-6 sm:w-8 sm:h-8 object-contain ${isDark ? '' : 'filter invert'}`} />
               </div>
               <div>
                 <h1 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>Criar Log</h1>
@@ -97,7 +96,7 @@ export default function CreateLogPage() {
                 onClick={toggleTheme}
                 className={`p-2 rounded-xl transition-colors ${isDark ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-100 text-black hover:bg-gray-200'}`}
               >
-                {isDark ? '☀️' : '🌙'}
+                {isDark ? <SunIcon /> : <MoonIcon />}
               </button>
               <button
                 onClick={() => window.close()}

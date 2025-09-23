@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { logSender } from '../services/logSender.js';
+import { SunIcon, MoonIcon } from '../components/Icons.jsx';
 
 export default function LoginPage({ onLogin }) {
   const { isDark, toggleTheme } = useTheme();
@@ -56,7 +57,7 @@ export default function LoginPage({ onLogin }) {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="w-32 h-32 mx-auto mb-4 flex items-center justify-center">
-            <img src="/logo-integra.png" alt="Logo" className="w-full h-full object-contain" />
+            <img src="/logo-integra.png" alt="Logo" className={`w-full h-full object-contain ${!isDark ? 'filter invert' : ''}`} />
           </div>
           <h1 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>Log Viewer</h1>
           <p className={`text-sm mt-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -136,7 +137,7 @@ export default function LoginPage({ onLogin }) {
             onClick={toggleTheme}
             className={`p-2 rounded-xl transition-colors ${isDark ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-gray-100 text-black hover:bg-gray-200'}`}
           >
-            {isDark ? '☀️' : '🌙'}
+            {isDark ? <SunIcon /> : <MoonIcon />}
           </button>
         </div>
       </div>

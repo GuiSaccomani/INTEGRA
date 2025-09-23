@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useTheme } from '../context/ThemeContext.jsx';
+import { SunIcon, MoonIcon } from '../components/Icons.jsx';
 
 export default function SettingsPage() {
   const { isDark, toggleTheme } = useTheme();
   const [settings, setSettings] = useState({
     syncEnabled: true,
+    captureEnabled: true,
     syncInterval: 5000,
     apiKey: ''
   });
@@ -52,7 +54,7 @@ export default function SettingsPage() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
               <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center flex-shrink-0">
-                <img src="/logo-integra.png" alt="Logo" className="w-full h-full object-contain" />
+                <img src="/logo-integra.png" alt="Logo" className={`w-full h-full object-contain ${!isDark ? 'filter invert' : ''}`} />
               </div>
               <div>
                 <h1 className={`text-xl sm:text-2xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>Configurações</h1>
@@ -66,7 +68,7 @@ export default function SettingsPage() {
                 onClick={toggleTheme}
                 className={`p-2 rounded-xl transition-colors ${isDark ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-100 text-black hover:bg-gray-200'}`}
               >
-                {isDark ? '☀️' : '🌙'}
+                {isDark ? <SunIcon /> : <MoonIcon />}
               </button>
               <button
                 onClick={() => window.close()}
@@ -99,7 +101,7 @@ export default function SettingsPage() {
                   {/* Toggle Sincronização */}
                   <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
                     <div>
-                      <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-black'}`}>Estado</h3>
+                      <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-black'}`}>Sincronização</h3>
                       <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
                         {settings.syncEnabled ? 'Sincronização ativa' : 'Sincronização pausada'}
                       </p>
@@ -112,6 +114,26 @@ export default function SettingsPage() {
                     >
                       <div className={`w-6 h-6 bg-white rounded-full transition-transform duration-300 absolute top-1 shadow-md ${
                         settings.syncEnabled ? 'translate-x-9' : 'translate-x-1'
+                      }`}></div>
+                    </button>
+                  </div>
+
+                  {/* Toggle Captura */}
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
+                    <div>
+                      <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-black'}`}>Captura</h3>
+                      <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                        {settings.captureEnabled ? 'Captura ativa' : 'Captura pausada'}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setSettings({...settings, captureEnabled: !settings.captureEnabled})}
+                      className={`w-16 h-8 rounded-full transition-all duration-300 relative shadow-lg ${
+                        settings.captureEnabled ? 'bg-black' : 'bg-gray-400'
+                      }`}
+                    >
+                      <div className={`w-6 h-6 bg-white rounded-full transition-transform duration-300 absolute top-1 shadow-md ${
+                        settings.captureEnabled ? 'translate-x-9' : 'translate-x-1'
                       }`}></div>
                     </button>
                   </div>
@@ -189,28 +211,23 @@ export default function SettingsPage() {
                       <div className={`w-3 h-3 rounded-full ${settings.syncEnabled ? 'bg-green-500' : 'bg-red-500'}`}></div>
                     </div>
                     <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-                      {settings.syncEnabled ? 'Sistema ativo e monitorando' : 'Sistema pausado'}
+                      {settings.syncEnabled ? 'Ativa' : 'Inativa'}
                     </p>
                     {settings.syncEnabled && (
                       <p className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                        Próxima atualização em {settings.syncInterval/1000}s
+                        Intervalo: {settings.syncInterval/1000}s
                       </p>
                     )}
                   </div>
                   
                   <div className={`p-4 rounded-xl border ${isDark ? 'bg-gray-900 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className={`font-semibold ${isDark ? 'text-white' : 'text-black'}`}>Autenticação</span>
-                      <div className={`w-3 h-3 rounded-full ${settings.apiKey ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
+                      <span className={`font-semibold ${isDark ? 'text-white' : 'text-black'}`}>Captura</span>
+                      <div className={`w-3 h-3 rounded-full ${settings.captureEnabled ? 'bg-green-500' : 'bg-red-500'}`}></div>
                     </div>
                     <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-                      {settings.apiKey ? 'API Key configurada' : 'API Key não definida'}
+                      {settings.captureEnabled ? 'Ativa' : 'Inativa'}
                     </p>
-                    {settings.apiKey && (
-                      <p className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                        Chave: ****{settings.apiKey.slice(-4)}
-                      </p>
-                    )}
                   </div>
 
                   <div className={`p-4 rounded-xl border ${isDark ? 'bg-gray-900 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
@@ -218,9 +235,9 @@ export default function SettingsPage() {
                       <span className={`font-semibold ${isDark ? 'text-white' : 'text-black'}`}>Conexão</span>
                       <div className="w-3 h-3 rounded-full bg-green-500"></div>
                     </div>
-                    <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Frontend operacional</p>
+                    <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Funcionando</p>
                     <p className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                      Última atualização: {new Date().toLocaleTimeString()}
+                      Última verificação: {new Date().toLocaleTimeString()}
                     </p>
                   </div>
                 </div>

@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext.jsx';
 import { api } from '../services/api.js';
 import LogTabs from '../components/LogTabs.jsx';
 import LogViewer from '../components/LogViewer.jsx';
+import { SunIcon, MoonIcon, ChartIcon } from '../components/Icons.jsx';
 
 export default function LogsPage() {
   const { isDark, toggleTheme } = useTheme();
@@ -87,7 +88,7 @@ export default function LogsPage() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
               <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center flex-shrink-0">
-                <img src="/logo-integra.png" alt="Logo" className="w-full h-full object-contain" />
+                <img src="/logo-integra.png" alt="Logo" className={`w-full h-full object-contain ${!isDark ? 'filter invert' : ''}`} />
               </div>
               <div className="min-w-0">
                 <h1 className={`text-xl sm:text-2xl font-bold truncate ${isDark ? 'text-white' : 'text-black'}`}>{serviceName}</h1>
@@ -102,7 +103,7 @@ export default function LogsPage() {
                 onClick={toggleTheme}
                 className={`p-2 rounded-xl transition-colors ${isDark ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-100 text-black hover:bg-gray-200'}`}
               >
-                {isDark ? '☀️' : '🌙'}
+                {isDark ? <SunIcon /> : <MoonIcon />}
               </button>
               <select
                 value={level}
@@ -187,7 +188,7 @@ export default function LogsPage() {
         <div className={`mt-6 rounded-2xl shadow-xl p-6 sm:p-8 border backdrop-blur-sm ${isDark ? 'bg-black border-gray-600' : 'bg-white/90 border-gray-100'}`}>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="text-2xl">📊</div>
+              <ChartIcon className={`w-6 h-6 ${isDark ? 'text-white' : 'text-black'}`} />
               <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>Relatório Detalhado</h3>
             </div>
             <div className={`text-xs px-3 py-1 rounded-full ${isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'}`}>
