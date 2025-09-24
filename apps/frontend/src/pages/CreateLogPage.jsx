@@ -22,8 +22,7 @@ export default function CreateLogPage() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/services');
-        const data = await response.json();
+        const data = await api.getServices();
         setServices(data);
       } catch (error) {
         console.error('Erro ao carregar serviços:', error);
@@ -37,34 +36,16 @@ export default function CreateLogPage() {
     setIsSubmitting(true);
     
     try {
-      // Simular criação de log (remova quando backend estiver pronto)
-      console.log('Criando log:', {
+      // Criar log via API
+      await api.createLog({
         service_id: parseInt(formData.service_id),
         level: formData.level,
         message: formData.message
       });
       
-      // Simular delay da API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
       setSuccess(true);
       setFormData({ service_id: '', level: 'INFO', message: '' });
       setTimeout(() => setSuccess(false), 3000);
-      
-      // Descomente quando backend estiver pronto:
-      /*
-      const response = await fetch('http://localhost:3001/api/logs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          service_id: parseInt(formData.service_id),
-          level: formData.level,
-          message: formData.message
-        })
-      });
-      
-      if (!response.ok) throw new Error('Erro na resposta do servidor');
-      */
       
     } catch (error) {
       console.error('Erro ao criar log:', error);
