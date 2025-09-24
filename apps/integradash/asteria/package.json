@@ -1,0 +1,23 @@
+{
+  "name": "node-axios-api",
+  "version": "1.0.0",
+  "description": "Exemplo de backend em Node com Axios e API REST",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "csv-parser": "^3.2.0",
+    "express": "^4.18.2",
+    "form-data": "^4.0.4",
+    "multer": "^2.0.2",
+    "node-fetch": "^2.7.0",
+    "oracledb": "^6.9.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}
+ 
