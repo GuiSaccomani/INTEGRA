@@ -2,7 +2,7 @@
 -- Criação do usuário
 -- --------------------------------------------------
 CREATE USER INTEGRA
-IDENTIFIED BY "senha"
+IDENTIFIED BY "1111"
 DEFAULT TABLESPACE USERS
 TEMPORARY TABLESPACE TEMP
 QUOTA UNLIMITED ON USERS;

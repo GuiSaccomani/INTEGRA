@@ -28,42 +28,38 @@ export default function LogsPage() {
   const port = searchParams.get('port') || '3000';
   const [level, setLevel] = useState('info');
 
-  // 🔗 PYTHON BACKEND: Preparado para receber logs do backend quando estiver pronto
+  // Carregar logs da API
   useEffect(() => {
-    // Simular conexão ativa para demonstração
-    setIsConnected(true);
-    
-    // Descomente quando backend estiver pronto:
-    /*
-    if (serviceId) {
+    const loadLogs = async () => {
       try {
-        const eventSource = new EventSource(`http://localhost:3001/api/logs/${serviceId}/stream`);
+        setIsConnected(true);
+        const apiLogs = await api.getLogs(100);
         
-        eventSource.onopen = () => {
-          setIsConnected(true);
-          console.log('Conectado ao stream de logs do Python');
-        };
+        // Converter formato da API para o formato esperado pelo frontend
+        const formattedLogs = apiLogs.map(log => ({
+          level: log.type || 'INFO',
+          timestamp: log.created_at || new Date().toISOString(),
+          message: log.content || log.message
+        }));
         
-        eventSource.onmessage = (event) => {
-          const logEntry = JSON.parse(event.data);
-          setLogs(prev => [...prev, logEntry]);
-        };
-        
-        eventSource.onerror = () => {
-          setIsConnected(false);
-          console.error('Erro na conexão com stream de logs');
-        };
-        
-        return () => {
-          eventSource.close();
-          setIsConnected(false);
-        };
+        // Mesclar com logs existentes sem duplicar
+        setLogs(prevLogs => {
+          const existingMessages = new Set(prevLogs.map(l => l.message));
+          const newLogs = formattedLogs.filter(l => !existingMessages.has(l.message));
+          return [...prevLogs, ...newLogs];
+        });
       } catch (error) {
-        console.error('Erro ao conectar stream:', error);
+        console.error('Erro ao carregar logs:', error);
         setIsConnected(false);
       }
-    }
-    */
+    };
+    
+    loadLogs();
+    
+    // Atualizar logs a cada 5 segundos
+    const interval = setInterval(loadLogs, 5000);
+    
+    return () => clearInterval(interval);
   }, [serviceId]);
 
   const filteredLogs = logs.filter(log => {

@@ -3,6 +3,7 @@ import { useTheme } from '../context/ThemeContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { logSender } from '../services/logSender.js';
 import { SunIcon, MoonIcon } from '../components/Icons.jsx';
+import { api } from '../services/api.js';
 
 export default function ServiceListPage() {
   const { isDark, toggleTheme } = useTheme();
@@ -23,8 +24,7 @@ export default function ServiceListPage() {
       await logSender.logUserAction('atualizou lista de serviços');
       
       // Conectando com a API
-      const response = await fetch('http://localhost:3001/api/services');
-      const data = await response.json();
+      const data = await api.getServices();
       setServices(data);
       
       console.log('Lista de serviços atualizada');

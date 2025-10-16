@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { logSender } from '../services/logSender.js';
 import { SunIcon, MoonIcon } from '../components/Icons.jsx';
+import { api } from '../services/api.js';
 
 export default function LoginPage({ onLogin }) {
   const { isDark, toggleTheme } = useTheme();
@@ -21,19 +22,25 @@ export default function LoginPage({ onLogin }) {
       // Simular delay de autenticação
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Validar credenciais
-      if (credentials.username === 'admin' && credentials.password === 'admin') {
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('username', credentials.username);
+      // Tentar login via API
+      try {
+        const response = await api.login(credentials);
         
-        // Registrar login (sem await para não bloquear)
-        logSender.logUserAction('fez login no sistema', {
-          username: credentials.username,
-          timestamp: new Date().toISOString()
-        }).catch(() => {});
-        
-        onLogin(true);
-      } else {
+        if (response.token || response.success) {
+          localStorage.setItem('isAuthenticated', 'true');
+          localStorage.setItem('username', credentials.username);
+          
+          // Registrar login (sem await para não bloquear)
+          logSender.logUserAction('fez login no sistema', {
+            username: credentials.username,
+            timestamp: new Date().toISOString()
+          }).catch(() => {});
+          
+          onLogin(true);
+        } else {
+          setError('Usuário ou senha incorretos');
+        }
+      } catch (apiError) {
         // Registrar tentativa falhada (sem await)
         logSender.logUserAction('tentativa de login falhada', {
           username: credentials.username,
