@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext.jsx';
 import { SunIcon, MoonIcon } from '../components/Icons.jsx';
+import { api } from '../services/api.js';
 
 export default function SettingsPage() {
   const { isDark, toggleTheme } = useTheme();
@@ -13,30 +14,35 @@ export default function SettingsPage() {
   const [showApiKey, setShowApiKey] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [originalSettings, setOriginalSettings] = useState({});
+
+  // Carregar configurações ao inicializar
+  useEffect(() => {
+    const loadConfig = async () => {
+      try {
+        const config = await api.getConfig();
+        const newSettings = { ...settings, ...config };
+        setSettings(newSettings);
+        setOriginalSettings(newSettings); // Salvar configurações originais
+      } catch (error) {
+        console.error('Erro ao carregar configurações:', error);
+      }
+    };
+    loadConfig();
+  }, []);
 
   const handleSave = async () => {
     setIsSaving(true);
     
     try {
-      // 🔗 PYTHON BACKEND: Salvar configurações
-      console.log('Salvando configurações:', settings);
+      // Salvar apenas configurações alteradas via API
+      const result = await api.updateConfig(settings, originalSettings);
       
-      // Simular delay da API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
-      
-      // Descomente quando backend estiver pronto:
-      /*
-      const response = await fetch('http://localhost:3001/api/settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(settings)
-      });
-      
-      if (!response.ok) throw new Error('Erro ao salvar configurações');
-      */
+      if (result.success) {
+        setOriginalSettings(settings); // Atualizar configurações originais
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 3000);
+      }
       
     } catch (error) {
       console.error('Erro ao salvar configurações:', error);
@@ -99,7 +105,7 @@ export default function SettingsPage() {
                 
                 <div className="space-y-6">
                   {/* Toggle Sincronização */}
-                  <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
+                  <div className={`flex items-center justify-between p-4 rounded-xl border ${isDark ? 'bg-gradient-to-r from-gray-800 to-gray-900 border-gray-700' : 'bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200'}`}>
                     <div>
                       <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-black'}`}>Sincronização</h3>
                       <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
@@ -119,7 +125,7 @@ export default function SettingsPage() {
                   </div>
 
                   {/* Toggle Captura */}
-                  <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
+                  <div className={`flex items-center justify-between p-4 rounded-xl border ${isDark ? 'bg-gradient-to-r from-gray-800 to-gray-900 border-gray-700' : 'bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200'}`}>
                     <div>
                       <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-black'}`}>Captura</h3>
                       <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
